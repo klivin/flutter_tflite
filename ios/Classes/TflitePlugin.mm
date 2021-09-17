@@ -572,23 +572,45 @@ NSMutableArray* parseSSDMobileNet(float threshold, int num_results_per_class) {
 #endif
   NSMutableArray* results = [NSMutableArray array];
 #ifdef TFLITE2
-  float* output_locations = TfLiteInterpreterGetOutputTensor(interpreter, 0)->data.f;
-  float* output_classes = TfLiteInterpreterGetOutputTensor(interpreter, 1)->data.f;
-  float* output_scores = TfLiteInterpreterGetOutputTensor(interpreter, 2)->data.f;
-  float* num_detections = TfLiteInterpreterGetOutputTensor(interpreter, 3)->data.f;
+  float* output_locations = TfLiteInterpreterGetOutputTensor(interpreter, 1)->data.f;
+  float* output_classes = TfLiteInterpreterGetOutputTensor(interpreter, 3)->data.f;
+  float* output_scores = TfLiteInterpreterGetOutputTensor(interpreter, 0)->data.f;
+  float* num_detections = TfLiteInterpreterGetOutputTensor(interpreter, 2)->data.f;
+  // NSLog(@"TFLITE2 Num Detections! %f", *num_detections);
+
 #else
   float* output_locations = interpreter->typed_output_tensor<float>(0);
   float* output_classes = interpreter->typed_output_tensor<float>(1);
   float* output_scores = interpreter->typed_output_tensor<float>(2);
   float* num_detections = interpreter->typed_output_tensor<float>(3);
+  // NSLog(@"TFLITE1 Num Detections! %d", *num_detections);
+
 #endif
+
+
+  // for (int d = 0; d < sizeof(output_classes); d++) {
+  //     NSLog(@"output_classes loc %d %f", d, output_classes[d]);
+  // }
+
+  // for (int d = 0; d < sizeof(output_locations); d++) {
+  //     NSLog(@"output_locations loc %d %f", d, output_locations[d]);
+  // }
+
+  // for (int d = 0; d < sizeof(num_detections); d++) {
+  //     NSLog(@"num_detections loc %d %f", d, num_detections[d]);
+  // }
+
+  // for (int d = 0; d < sizeof(output_scores); d++) {
+  //     NSLog(@"output_scores loc %d %f", d, output_scores[d]);
+  // }
 
   NSMutableDictionary* counters = [NSMutableDictionary dictionary];
   for (int d = 0; d < *num_detections; d++)
   {
     const int detected_class = output_classes[d];
     float score = output_scores[d];
-    
+    // NSLog(@"Detected Class! %d Score %f, %f, %d", detected_class, score, *num_detections, *num_detections);
+
     if (score < threshold) continue;
     
     NSMutableDictionary* res = [NSMutableDictionary dictionary];
@@ -612,6 +634,7 @@ NSMutableArray* parseSSDMobileNet(float threshold, int num_results_per_class) {
     const float xmin = fmax(0, output_locations[d * 4 + 1]);
     const float ymax = output_locations[d * 4 + 2];
     const float xmax = output_locations[d * 4 + 3];
+    // NSLog(@"output_locations loc %f %f %f %f", xmin, ymin,  xmax, ymax);
 
     NSMutableDictionary* rect = [NSMutableDictionary dictionary];
     [rect setObject:@(xmin) forKey:@"x"];
