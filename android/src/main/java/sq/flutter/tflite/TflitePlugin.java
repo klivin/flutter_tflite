@@ -390,7 +390,9 @@ public class TflitePlugin implements MethodCallHandler {
   ByteBuffer feedInputTensorImage(String path, float mean, float std) throws IOException {
     InputStream inputStream = new FileInputStream(path.replace("file://", ""));
     Bitmap bitmapRaw = BitmapFactory.decodeStream(inputStream);
-
+    Matrix matrix = new Matrix();
+    matrix.postRotate(90);
+    bitmapRaw = Bitmap.createBitmap(bitmapRaw, 0, 0, bitmapRaw.getWidth(), bitmapRaw.getHeight(), matrix, true);
     return feedInputTensor(bitmapRaw, mean, std);
   }
 
@@ -418,6 +420,7 @@ public class TflitePlugin implements MethodCallHandler {
     bmData.copyTo(bitmapRaw);
 
     Matrix matrix = new Matrix();
+    Log.v("Rotating!", " " + rotation);
     matrix.postRotate(rotation);
     bitmapRaw = Bitmap.createBitmap(bitmapRaw, 0, 0, bitmapRaw.getWidth(), bitmapRaw.getHeight(), matrix, true);
 
@@ -654,18 +657,22 @@ public class TflitePlugin implements MethodCallHandler {
 
     RunSSDMobileNet(HashMap args, ByteBuffer imgData, int numResultsPerClass, float threshold, Result result) {
       super(args, result);
-      this.num = tfLite.getOutputTensor(0).shape()[1];
+      this.num = 10; //tfLite.getOutputTensor(2).shape()[0][0];
       this.numResultsPerClass = numResultsPerClass;
       this.threshold = threshold;
       this.outputLocations = new float[1][num][4];
       this.outputClasses = new float[1][num];
       this.outputScores = new float[1][num];
       this.inputArray = new Object[]{imgData};
+      // Log.v("T0", " " + tfLite.getOutputTensor(0).numBytes());
+      // Log.v("T1", " " + tfLite.getOutputTensor(1).numBytes());
+      // Log.v("T2", " " + tfLite.getOutputTensor(2).numBytes());
+      // Log.v("T3", " " + tfLite.getOutputTensor(3).numBytes());
 
-      outputMap.put(0, outputLocations);
-      outputMap.put(1, outputClasses);
-      outputMap.put(2, outputScores);
-      outputMap.put(3, numDetections);
+      outputMap.put(1, outputLocations);
+      outputMap.put(3, outputClasses);
+      outputMap.put(0, outputScores);
+      outputMap.put(2, numDetections);
 
       startTime = SystemClock.uptimeMillis();
     }
