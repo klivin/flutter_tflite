@@ -274,9 +274,9 @@ NSString* loadModel(NSObject<FlutterPluginRegistrar>* _registrar, NSDictionary* 
 #ifdef TFLITE2
   interpreter = TfLiteInterpreterCreate(model, options);
   if (!interpreter) {
-    return @"Failed to construct interpreter";
+    return @"TFLITE2 Failed to construct interpreter";
   } else {
-    NSLog("Successfully loaded interpreter");
+    NSLog(@"Successfully loaded interpreter");
   }
   
   if (TfLiteInterpreterAllocateTensors(interpreter) != kTfLiteOk) {
@@ -286,7 +286,7 @@ NSString* loadModel(NSObject<FlutterPluginRegistrar>* _registrar, NSDictionary* 
   tflite::ops::builtin::BuiltinOpResolver resolver;
   tflite::InterpreterBuilder(*model, resolver)(&interpreter);
   if (!interpreter) {
-    return @"Failed to construct interpreter";
+    return @"NOT TFLITE2 Failed to construct interpreter";
   }
   
   if (interpreter->AllocateTensors() != kTfLiteOk) {
@@ -551,7 +551,7 @@ void runModelOnImage(NSDictionary* args, FlutterResult result) {
   NSMutableArray* empty = [@[] mutableCopy];
   
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"runModelOnImage Failed to construct interpreter or busy.");
     return result(empty);
   }
   
@@ -584,7 +584,7 @@ void runModelOnBinary(NSDictionary* args, FlutterResult result) {
   NSMutableArray* empty = [@[] mutableCopy];
   
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"runModelOnBinary Failed to construct interpreter or busy.");
     return result(empty);
   }
 
@@ -622,7 +622,7 @@ void runModelOnFrame(NSDictionary* args, FlutterResult result) {
   NSLog(@"Running on frame. %d %d", image_height, image_width);
 
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Frame - Failed to construct interpreter or busy. %f %f", input_mean, input_std);
+    NSLog(@"runModelOnFrame Frame - Failed to construct interpreter or busy. %f %f", input_mean, input_std);
     return result(empty);
   }
   
@@ -859,7 +859,7 @@ void detectObjectOnImage(NSDictionary* args, FlutterResult result) {
   NSMutableArray* empty = [@[] mutableCopy];
   
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"detectObjectOnImage Failed to construct interpreter or busy.");
     return result(empty);
   }
   
@@ -893,7 +893,7 @@ void detectObjectOnBinary(NSDictionary* args, FlutterResult result) {
   NSMutableArray* empty = [@[] mutableCopy];
   
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"detectObjectOnBinary Failed to construct interpreter or busy.");
     return result(empty);
   }
   
@@ -931,7 +931,7 @@ void detectObjectOnFrame(NSDictionary* args, FlutterResult result) {
   NSMutableArray* empty = [@[] mutableCopy];
   
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"detectObjectOnFrame Frame - Failed to construct interpreter or busy. %f %f", input_mean, input_std);
     return result(empty);
   }
   
@@ -1149,7 +1149,7 @@ void runSegmentationOnImage(NSDictionary* args, FlutterResult result) {
   NSMutableArray* empty = [@[] mutableCopy];
   
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"runSegmentationOnImage Failed to construct interpreter or busy.");
     return result(empty);
   }
   
