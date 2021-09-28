@@ -275,6 +275,8 @@ NSString* loadModel(NSObject<FlutterPluginRegistrar>* _registrar, NSDictionary* 
   interpreter = TfLiteInterpreterCreate(model, options);
   if (!interpreter) {
     return @"Failed to construct interpreter";
+  } else {
+    NSLog("Successfully loaded interpreter");
   }
   
   if (TfLiteInterpreterAllocateTensors(interpreter) != kTfLiteOk) {
@@ -617,9 +619,10 @@ void runModelOnFrame(NSDictionary* args, FlutterResult result) {
   const float input_mean = [args[@"imageMean"] floatValue];
   const float input_std = [args[@"imageStd"] floatValue];
   NSMutableArray* empty = [@[] mutableCopy];
-  
+  NSLog(@"Running on frame. %d %d", image_height, image_width);
+
   if (!interpreter || interpreter_busy) {
-    NSLog(@"Failed to construct interpreter or busy.");
+    NSLog(@"Frame - Failed to construct interpreter or busy. %f %f", input_mean, input_std);
     return result(empty);
   }
   
