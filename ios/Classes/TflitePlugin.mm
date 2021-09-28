@@ -27,8 +27,6 @@
 #include "tensorflow/lite/op_resolver.h"
 #endif
 
-#include "ios_image_load.h"
-
 #define LOG(x) std::cerr
 
 
