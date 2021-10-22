@@ -223,6 +223,8 @@ static void LoadLabels(NSString* labels_path,
 }
 
 NSString* loadModel(NSObject<FlutterPluginRegistrar>* _registrar, NSDictionary* args) {
+  NSLog(@"Loading model");
+
   NSString* graph_path;
   NSString* key;
   NSNumber* isAssetNumber = args[@"isAsset"];
